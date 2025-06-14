@@ -15,6 +15,8 @@ export const loginUser = async (data: FieldValues) => {
 
   const userData = await result.json();
   console.log("User data:", userData);
+  (await cookies()).set("accessToken", userData.data.accessToken);
+  (await cookies()).set("refreshToken", userData.data.refreshToken);
   return userData;
 };
 
@@ -30,8 +32,7 @@ export const forgotPassword = async (data: FieldValues) => {
     }
   );
   const result = await res.json();
-  (await cookies()).set("accessToken", result.accessToken);
-  (await cookies()).set("refreshToken", result.refreshToken);
+
   return result;
 };
 

@@ -21,12 +21,14 @@ import { toast } from "sonner";
 // import { useState } from "react";
 import { BsGoogle } from "react-icons/bs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const form = useForm();
+  const router = useRouter();
   // const [submitting, setIsSubmitting] = useState(false);
   const submitting = form.formState.isSubmitting;
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -39,6 +41,7 @@ export function LoginForm({
       console.log(result);
       if (result.success) {
         toast.success("Login successful!");
+        router.push("/");
       }
     } catch (error) {
       toast.error(`${error}`);

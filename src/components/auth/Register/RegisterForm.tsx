@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { register } from "../services";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const [imageFile, setImageFile] = useState<File[] | []>([]);
   const [previewImage, setpreviewImage] = useState<string[] | []>([]);
@@ -27,6 +28,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const form = useForm();
   const submitting = form.formState.isSubmitting;
   const formData = new FormData();
+  const router = useRouter();
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
     const patient = {
@@ -46,6 +48,8 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
     const res = await register(formData);
     if (res.success) {
       toast.success("User Created Successfully");
+
+      router.push("/login");
     } else {
       toast.error("Something Went Wrong !!");
     }
