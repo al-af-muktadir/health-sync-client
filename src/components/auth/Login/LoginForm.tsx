@@ -21,14 +21,19 @@ import { toast } from "sonner";
 // import { useState } from "react";
 import { BsGoogle } from "react-icons/bs";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useUser } from "@/api/Context/UserContext";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { refetchUser } = useUser();
   const form = useForm();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirectPath");
+  // const router=useRouter();
   // const [submitting, setIsSubmitting] = useState(false);
   const submitting = form.formState.isSubmitting;
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -41,7 +46,13 @@ export function LoginForm({
       console.log(result);
       if (result.success) {
         toast.success("Login successful!");
-        router.push("/dashboard")
+        if (redirect) {
+          router.push(redirect);
+          refetchUser();
+        } else {
+          refetchUser();
+          router.push("/");
+        }
       }
     } catch (error) {
       toast.error(`${error}`);
@@ -87,9 +98,6 @@ export function LoginForm({
                     <FormItem>
                       <div className="flex items-center justify-between">
                         <FormLabel>Password</FormLabel>
-                        <Link href={"login/forgotpassword"}>
-                          Forgotten Password?
-                        </Link>
                       </div>
                       <FormControl>
                         <Input
@@ -105,16 +113,6 @@ export function LoginForm({
 
                 <Button type="submit" className="w-full">
                   {submitting ? "Logging in ..." : "Login"}
-                </Button>
-
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-card text-muted-foreground relative z-10 px-2">
-                    Or continue with
-                  </span>
-                </div>
-
-                <Button variant="outline" type="button" className="w-full">
-                  Login with Google <BsGoogle />
                 </Button>
 
                 <div className="text-center text-sm">

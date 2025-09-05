@@ -18,7 +18,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { register } from "../services";
+import { registerUser } from "../services";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
@@ -34,7 +34,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
       address: "",
     },
   });
-  
+
   const submitting = form.formState.isSubmitting;
   const formData = new FormData();
   const router = useRouter();
@@ -50,11 +50,12 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
       password: data.password,
       patient,
     };
+    // console.log(userInfo, "inorm");
     formData.append("data", JSON.stringify(userInfo) as any);
     formData.append("file", imageFile[0]);
     // console.log(imageFile[0]);
     // console.log(userInfo);
-    const res = await register(formData);
+    const res = await registerUser(formData);
     if (res.success) {
       toast.success("User Created Successfully");
 

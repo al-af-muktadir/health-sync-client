@@ -24,7 +24,7 @@ export function Banner() {
   );
 
   return (
-    <div className="w-full mt-20">
+    <div className="max-w-[1800px] mt-20">
       <Carousel
         opts={{ loop: true }}
         plugins={[autoplay.current]}

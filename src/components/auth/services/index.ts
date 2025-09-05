@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { cookies } from "next/headers";
@@ -47,14 +48,20 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const register = async (data: FormData) => {
+export const registerUser = async (data: any) => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/user/create-patient`,
     {
       method: "POST",
+
       body: data,
     }
   );
   const result = await res.json();
+  // console.log("Register result:", result);
   return result;
+};
+export const logoutUser = async () => {
+  (await cookies()).delete("accessToken");
+  (await cookies()).delete("refreshToken");
 };
