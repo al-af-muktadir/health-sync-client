@@ -19,6 +19,7 @@ import { getSpecialties } from "@/components/auth/services/adminServices";
 import logo from "../../../../public/Animation - 1749834497886.json";
 import { useRouter } from "next/navigation";
 
+// Doctor interface
 interface Doctor {
   id: string;
   name: string;
@@ -34,22 +35,38 @@ interface Doctor {
   email: string;
 }
 
+// Specialty interface
+interface Specialty {
+  id: string;
+  title: string;
+  icon?: string;
+}
+
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [specialty, setSpecialty] = useState("");
-  const [specialtyRes, setSpecialtyRes] = useState([]);
+  const [specialtyRes, setSpecialtyRes] = useState<Specialty[]>([]);
   const [gender, setGender] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   const router = useRouter();
 
+  // Fetch all specialties
   const fetchSpecialties = async () => {
-    const res = await getSpecialties();
-    setSpecialtyRes(res.data);
+    try {
+      const res = await getSpecialties();
+      if (res.data) {
+        setSpecialtyRes(res.data as Specialty[]);
+      }
+    } catch (err) {
+      console.error("Error fetching specialties", err);
+    }
   };
 
+  // Fetch doctors with filters
   const fetchDoctors = async () => {
     setLoading(true);
     try {
@@ -63,7 +80,7 @@ export default function DoctorsPage() {
       setDoctors(res.data || []);
       setTotalPages(Math.ceil(res.meta.total / res.meta.limit));
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching doctors", err);
       setDoctors([]);
     } finally {
       setLoading(false);
@@ -131,14 +148,14 @@ export default function DoctorsPage() {
         </select>
       </div>
 
-      {/* Loading State */}
+      {/* Loading */}
       {loading && (
         <div className="flex justify-center py-8">
           <Lottie className="w-20" animationData={logo} loop />
         </div>
       )}
 
-      {/* Doctor Cards or No Doctor Message */}
+      {/* Doctors List */}
       {!loading && doctors.length > 0 ? (
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {doctors.map((doc) => (
@@ -153,7 +170,6 @@ export default function DoctorsPage() {
               }}
               className="relative rounded-xl border border-violet-600/30 bg-gradient-to-b from-gray-900 to-gray-800 shadow-lg backdrop-blur-sm hover:border-violet-500/60 transition-all duration-300"
             >
-              {/* Image Placeholder on Top */}
               <div className="w-full h-64 relative">
                 <Image
                   src={doc.profilePhoto || "/default-doctor.png"}
@@ -162,8 +178,6 @@ export default function DoctorsPage() {
                   className="object-cover rounded-t-xl"
                 />
               </div>
-
-              {/* Doctor Info Section */}
               <div className="p-6 space-y-3">
                 <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
                   <FaUserMd className="text-violet-400" /> {doc.name}
@@ -173,7 +187,6 @@ export default function DoctorsPage() {
                   {doc.specialty.title}
                 </p>
 
-                {/* Key Info Grid */}
                 <div className="grid grid-cols-2 gap-2 mt-3 text-gray-300">
                   <div className="flex items-center gap-2 bg-gray-900/60 rounded-lg px-3 py-1 border border-violet-500/30">
                     <FaIdCard className="text-pink-400" />{" "}
@@ -200,7 +213,6 @@ export default function DoctorsPage() {
                   </div>
                 </div>
 
-                {/* Book Appointment Button */}
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

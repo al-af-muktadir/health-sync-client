@@ -5,12 +5,12 @@ import {
   CalendarCheck2,
   ClipboardList,
   LayoutDashboard,
-  SquareTerminal,
   UsersRoundIcon,
   FileClock,
   DollarSign,
   Paperclip,
   Check,
+  LucideIcon,
 } from "lucide-react";
 import image from "../../../public/Animation - 1749834497886.json";
 import Link from "next/link";
@@ -187,6 +187,14 @@ export function AppSidebar({
     }
   };
 
+  interface NavItem {
+    title: string;
+    url?: string; // <-- make optional
+    icon?: LucideIcon;
+    isActive?: boolean;
+    items?: { title: string; url: string }[];
+  }
+
   const navData = { navMain: getNavItems() };
 
   return (
@@ -199,8 +207,8 @@ export function AppSidebar({
       <SidebarHeader className="px-4 py-4 bg-[#1a1538]">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="xl" asChild>
-              <Link href="/" className="flex items-center gap-3">
+            <SidebarMenuButton asChild>
+              <Link href="/" className="flex items-center gap-3 px-2 py-2">
                 <div className="relative flex-shrink-0 w-12 h-12 rounded-full bg-[#1e173f] border border-[#5f3dc4] flex items-center justify-center shadow-md">
                   <div className="w-10 h-10">
                     <Lottie animationData={image} loop />
@@ -229,13 +237,13 @@ export function AppSidebar({
       {/* Content */}
       <SidebarContent className="flex-1 bg-black/90 backdrop-blur-sm">
         <NavMain
-          items={navData.navMain}
+          items={navData.navMain as NavItem[]}
           itemClassName="relative group rounded-md overflow-hidden"
           activeClassName="bg-[rgba(99,54,223,0.15)] text-white"
           iconClassName="stroke-[1.3]"
           linkWrapper={({ children, href, isActive }: any) => (
             <Link
-              href={href}
+              href={href ?? "#"} // fallback if url is undefined
               className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition ${
                 isActive ? "text-white" : "text-gray-300 group-hover:text-white"
               }`}

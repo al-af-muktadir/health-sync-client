@@ -25,9 +25,9 @@ export default function VideoCallComponent({
   const localVideoRef = useRef<HTMLDivElement>(null);
 
   // Get local mic + camera
-  const { microphoneTrack, isLoading: isLoadingMic } =
+  const { localMicrophoneTrack, isLoading: isLoadingMic } =
     useLocalMicrophoneTrack();
-  const { cameraTrack, isLoading: isLoadingCam } = useLocalCameraTrack();
+  const { localCameraTrack, isLoading: isLoadingCam } = useLocalCameraTrack();
 
   // Remote users
   const remoteUsers = useRemoteUsers();
@@ -36,14 +36,14 @@ export default function VideoCallComponent({
   useJoin({ appid: appId, channel: channelName, token, uid });
 
   // Publish local tracks
-  usePublish([microphoneTrack, cameraTrack]);
+  usePublish([localMicrophoneTrack, localCameraTrack]);
 
   // Play local camera once it’s ready
   useEffect(() => {
-    if (localVideoRef.current && cameraTrack) {
-      cameraTrack.play(localVideoRef.current);
+    if (localVideoRef.current && localCameraTrack) {
+      localCameraTrack.play(localVideoRef.current);
     }
-  }, [cameraTrack]);
+  }, [localCameraTrack]);
 
   if (isLoadingMic || isLoadingCam) return <div>Loading devices...</div>;
 

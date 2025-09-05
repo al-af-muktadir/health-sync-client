@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,21 +21,40 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
+interface NavItem {
+  title: string;
+  url?: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: { title: string; url: string }[];
+}
+
+interface NavMainProps {
+  items: NavItem[];
+  itemClassName?: string;
+  activeClassName?: string;
+  iconClassName?: string;
+  linkWrapper?: (props: {
+    children: React.ReactNode;
+    href?: string;
+    isActive?: boolean;
+  }) => React.ReactNode;
+}
+
 export function NavMain({
   items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+  itemClassName = "",
+  activeClassName = "",
+  iconClassName = "",
+  linkWrapper,
+}: NavMainProps) {
   const pathname = usePathname();
+
+  const wrapLink = (
+    children: React.ReactNode,
+    href?: string,
+    isActive?: boolean
+  ) => (linkWrapper ? linkWrapper({ children, href, isActive }) : children);
 
   return (
     <SidebarGroup>
@@ -52,39 +72,29 @@ export function NavMain({
               defaultOpen={isActive || isSubActive}
               className="group/collapsible"
             >
-              <SidebarMenuItem>
+              <SidebarMenuItem className={itemClassName}>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    className={`
-                      group flex items-center
-                      ${
-                        isActive
-                          ? "bg-violet-100 text-violet-700 font-semibold"
-                          : "hover:bg-violet-50 hover:text-violet-700"
-                      }
-                      transition-all duration-150 rounded-md px-2
-                    `}
-                  >
-                    {item.url ? (
-                      <Link href={item.url}>
+                  <SidebarMenuButton asChild tooltip={item.title}>
+                    {wrapLink(
+                      item.url ? (
                         <div className="flex items-center gap-2">
-                          {item.icon && <item.icon className="size-4" />}
+                          {item.icon && <item.icon className={iconClassName} />}
                           <span>{item.title}</span>
                           {hasSubItems && (
                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                           )}
                         </div>
-                      </Link>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        {item.icon && <item.icon className="size-4" />}
-                        <span>{item.title}</span>
-                        {hasSubItems && (
-                          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                        )}
-                      </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {item.icon && <item.icon className={iconClassName} />}
+                          <span>{item.title}</span>
+                          {hasSubItems && (
+                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          )}
+                        </div>
+                      ),
+                      item.url,
+                      isActive
                     )}
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -92,24 +102,15 @@ export function NavMain({
                 {hasSubItems && (
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items.map((subItem) => {
+                      {item.items!.map((subItem) => {
                         const isSubActive = pathname === subItem.url;
                         return (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              className={`
-                                ${
-                                  isSubActive
-                                    ? "bg-violet-100 text-violet-700 font-medium"
-                                    : "hover:bg-violet-50 hover:text-violet-700"
-                                }
-                                transition-all duration-150
-                              `}
+                              className={isSubActive ? activeClassName : ""}
                             >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
+                              <Link href={subItem.url}>{subItem.title}</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         );

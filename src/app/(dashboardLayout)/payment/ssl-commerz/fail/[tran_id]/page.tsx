@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { XCircle, RefreshCw } from "lucide-react";
@@ -7,11 +8,7 @@ import { fetchAppointment } from "@/components/auth/services/userService";
 import { PaymentInitiate } from "@/components/auth/services/doctorServices";
 import { toast, Toaster } from "sonner";
 
-export default function FailurePage({
-  params,
-}: {
-  params: { tran_id: string };
-}) {
+export default function FailurePage({ params }: { params: any }) {
   const { tran_id } = params;
   const handlePaymentRetry = async () => {
     const appRes = await fetchAppointment(tran_id);

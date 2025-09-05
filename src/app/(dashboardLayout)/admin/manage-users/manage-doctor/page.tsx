@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import Image from "next/image";
@@ -6,11 +7,37 @@ import { FaTrash } from "react-icons/fa";
 import { fetchSpecialties } from "@/components/auth/services/userService";
 import { toast } from "sonner";
 
+// Define types
+type Specialty = {
+  id: string;
+  title: string;
+};
+
+type Doctor = {
+  id: string;
+  name: string;
+  email: string;
+  contactNumber: string;
+  gender: string;
+  profilePhoto?: string;
+  appointmentFee: number;
+  specialty?: Specialty;
+};
+
+type DoctorsResponse = {
+  data: Doctor[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+};
+
 const ManageDoctors = () => {
-  const [doctors, setDoctors] = useState<any[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [meta, setMeta] = useState({ page: 1, limit: 5, total: 0 });
   const [searchTerm, setSearchTerm] = useState("");
-  const [specialties, setSpecialties] = useState<any[]>([]);
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [filters, setFilters] = useState({
     gender: "",
     specialties: "",
@@ -25,13 +52,15 @@ const ManageDoctors = () => {
       if (filters.gender) query.append("gender", filters.gender);
       if (filters.specialties) query.append("specialties", filters.specialties);
 
-      const res = await axios.get(
+      const res = await axios.get<DoctorsResponse>(
         `http://localhost:5000/api/v1/doctor?${query.toString()}`
       );
-      setDoctors(res?.data.data);
-      setMeta(res?.data.meta);
+
+      setDoctors(res.data.data);
+      setMeta(res.data.meta);
     } catch (err) {
       console.error("Error fetching doctors", err);
+      toast.error("Failed to fetch doctors");
     }
   };
 
@@ -41,6 +70,7 @@ const ManageDoctors = () => {
       setSpecialties(res.data || []);
     } catch (err) {
       console.error("Error fetching specialties", err);
+      toast.error("Failed to fetch specialties");
     }
   };
 
@@ -48,10 +78,11 @@ const ManageDoctors = () => {
     if (!confirm("Are you sure you want to delete this doctor?")) return;
     try {
       await axios.delete(`http://localhost:5000/api/v1/doctor/${id}`);
-
+      toast.success("Doctor deleted successfully!");
       fetchDoctors();
     } catch (err) {
       console.error("Delete failed", err);
+      toast.error("Failed to delete doctor");
     }
   };
 

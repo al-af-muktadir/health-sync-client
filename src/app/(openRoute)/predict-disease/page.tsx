@@ -1,11 +1,11 @@
 "use client";
-/* Importing required dependencies for React, motion, and state management */
+
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants, Transition } from "framer-motion";
 import { useUser } from "@/api/Context/UserContext";
 
-// Defining the list of unique symptoms extracted from the dataset
-const symptomList = [
+// Symptom list
+const symptomList: string[] = [
   "itching",
   "skin_rash",
   "nodal_skin_eruptions",
@@ -138,15 +138,22 @@ const symptomList = [
   "yellow_crust_ooze",
 ];
 
-const Prediction = () => {
-  const { user } = useUser();
-  // Managing state for input, symptoms list, prediction result, and loading status
-  const [inputSymptom, setInputSymptom] = useState("");
-  const [symptoms, setSymptoms] = useState([]);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+// Type for prediction result
+interface PredictionResult {
+  disease: string;
+  description: string;
+  precautions: string[];
+}
 
-  // Handling adding a symptom to the list
+const Prediction: React.FC = () => {
+  const { user } = useUser();
+
+  const [inputSymptom, setInputSymptom] = useState<string>("");
+  const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [result, setResult] = useState<PredictionResult | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Add symptom
   const handleAddSymptom = () => {
     const trimmed = inputSymptom.trim();
     if (
@@ -159,12 +166,12 @@ const Prediction = () => {
     setInputSymptom("");
   };
 
-  // Handling removing a symptom from the list
-  const handleRemoveSymptom = (symptom) => {
+  // Remove symptom
+  const handleRemoveSymptom = (symptom: string) => {
     setSymptoms(symptoms.filter((s) => s !== symptom));
   };
 
-  // Handling form submission to predict disease
+  // Submit prediction
   const handleSubmit = async () => {
     if (symptoms.length === 0) return;
     setLoading(true);
@@ -173,14 +180,10 @@ const Prediction = () => {
     try {
       const res = await fetch("http://127.0.0.1:5000/predict", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ symptoms }),
       });
-
-      const data = await res.json();
-      console.log("Prediction Result:", data);
+      const data: PredictionResult = await res.json();
       setResult(data);
     } catch (err) {
       console.error("Prediction failed:", err);
@@ -189,22 +192,21 @@ const Prediction = () => {
     }
   };
 
-  // Handling Suggest Doctor button click
-  const handleSuggestDoctor = (disease) => {
-    window.location.href = `http://localhost:3000/predict-disease/predictdiseasebydoctor?prediction=${encodeURIComponent(
+  // Suggest doctor
+  const handleSuggestDoctor = (disease: string) => {
+    window.location.href = `/predict-disease/predictdiseasebydoctor?prediction=${encodeURIComponent(
       disease
     )}`;
   };
 
-  // Filtering symptoms for autocomplete based on user input
-  const filteredSymptoms = symptomList.filter((symptom) =>
-    symptom.toLowerCase().includes(inputSymptom.toLowerCase())
+  const filteredSymptoms = symptomList.filter((s) =>
+    s.toLowerCase().includes(inputSymptom.toLowerCase())
   );
 
-  // Animation variants for staggered symptom tags
-  const symptomVariants = {
+  // Animation Variants
+  const symptomVariants: Variants = {
     hidden: { opacity: 0, x: -20 },
-    visible: (i) => ({
+    visible: (i: number) => ({
       opacity: 1,
       x: 0,
       transition: { delay: i * 0.1, duration: 0.3 },
@@ -212,19 +214,15 @@ const Prediction = () => {
     exit: { opacity: 0, x: 20, transition: { duration: 0.2 } },
   };
 
-  // Animation variants for buttons
-  const buttonVariants = {
+  const buttonTransition: Transition = { duration: 0.5, ease: "easeOut" };
+
+  const buttonVariants: Variants = {
     initial: { scale: 0.8, opacity: 0 },
-    animate: {
-      scale: 1,
-      opacity: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
+    animate: { scale: 1, opacity: 1, transition: buttonTransition },
     hover: { scale: 1.05, transition: { duration: 0.2 } },
   };
 
-  // Animation variants for the result section
-  const resultVariants = {
+  const resultVariants: Variants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
       opacity: 1,
@@ -234,7 +232,6 @@ const Prediction = () => {
   };
 
   return (
-    // Rendering the main container to fit the viewport without scrolling
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-between py-8 px-4">
       <motion.div
         initial={{ opacity: 0 }}
@@ -242,7 +239,6 @@ const Prediction = () => {
         transition={{ duration: 0.8 }}
         className="max-w-4xl w-full flex flex-col gap-6"
       >
-        {/* Title Section */}
         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -252,7 +248,7 @@ const Prediction = () => {
           🧬 Disease Predictor
         </motion.h1>
 
-        {/* Symptom Input Section */}
+        {/* Symptom Input */}
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -288,7 +284,7 @@ const Prediction = () => {
           </div>
         </motion.section>
 
-        {/* Selected Symptoms Section */}
+        {/* Selected Symptoms */}
         <AnimatePresence>
           {symptoms.length > 0 && (
             <motion.section
@@ -324,7 +320,7 @@ const Prediction = () => {
           )}
         </AnimatePresence>
 
-        {/* Predict Button Section */}
+        {/* Predict Button */}
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -344,7 +340,7 @@ const Prediction = () => {
           </motion.button>
         </motion.section>
 
-        {/* Prediction Result Section */}
+        {/* Prediction Result */}
         <AnimatePresence>
           {result && (
             <motion.section
@@ -359,33 +355,32 @@ const Prediction = () => {
               <div className="space-y-3">
                 <p>
                   <strong className="text-fuchsia-400">Disease:</strong>{" "}
-                  {result?.disease}
+                  {result.disease}
                 </p>
                 <p className="line-clamp-2">
                   <strong className="text-fuchsia-400">Description:</strong>{" "}
-                  {result?.description}
+                  {result.description}
                 </p>
                 <div>
                   <strong className="text-fuchsia-400">Precautions:</strong>
                   <ul className="list-disc list-inside mt-1 text-sm text-zinc-300 max-h-20 overflow-y-auto">
-                    {result?.precautions?.map((p, index) => (
-                      <li key={index}>{p}</li>
+                    {result.precautions.map((p, i) => (
+                      <li key={i}>{p}</li>
                     ))}
                   </ul>
                 </div>
-                {user?.role === "PATIENT" ||
-                  (user?.role === "ADMIN" && (
-                    <motion.button
-                      onClick={() => handleSuggestDoctor(result?.disease)}
-                      variants={buttonVariants}
-                      initial="initial"
-                      animate="animate"
-                      whileHover="hover"
-                      className="bg-violet-600 text-white px-4 py-2 rounded-lg mt-3"
-                    >
-                      Suggest Doctor
-                    </motion.button>
-                  ))}
+                {(user?.role === "PATIENT" || user?.role === "ADMIN") && (
+                  <motion.button
+                    onClick={() => handleSuggestDoctor(result.disease)}
+                    variants={buttonVariants}
+                    initial="initial"
+                    animate="animate"
+                    whileHover="hover"
+                    className="bg-violet-600 text-white px-4 py-2 rounded-lg mt-3"
+                  >
+                    Suggest Doctor
+                  </motion.button>
+                )}
               </div>
             </motion.section>
           )}

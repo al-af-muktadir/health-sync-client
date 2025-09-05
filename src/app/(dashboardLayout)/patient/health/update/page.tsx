@@ -1,5 +1,5 @@
-"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useState, useEffect } from "react";
@@ -13,14 +13,17 @@ import {
 import logo from "../../../../../../public/Animation - 1749834497886.json";
 import Lottie from "lottie-react";
 
+// Define HealthData interface
 interface HealthData {
   gender: "MALE" | "FEMALE";
   dateOfBirth: string;
   bloodGroup: string;
-  hasAllergies?: boolean;
-  hasDiabetes?: boolean;
   height: string;
   weight: string;
+  maritalStatus: "MARRIED" | "UNMARRIED";
+
+  hasAllergies?: boolean;
+  hasDiabetes?: boolean;
   smokingStatus?: boolean;
   dietaryPreferences?: string;
   pregnancyStatus?: boolean;
@@ -29,9 +32,9 @@ interface HealthData {
   hasPastSurgeries?: boolean;
   recentAnxiety?: boolean;
   recentDepression?: boolean;
-  maritalStatus: "MARRIED" | "UNMARRIED";
 }
 
+// Empty/default health data
 const emptyHealthData: HealthData = {
   gender: "MALE",
   dateOfBirth: "",
@@ -66,7 +69,7 @@ export default function HealthPage() {
         } else {
           toast("No previous data found, fill the form");
         }
-      } catch (err: any) {
+      } catch (err) {
         toast.error("Something went wrong while fetching data");
       } finally {
         setLoading(false);
@@ -75,7 +78,11 @@ export default function HealthPage() {
     fetchHealthData();
   }, []);
 
-  const handleChange = (field: string, value: any) => {
+  // Properly typed handleChange function
+  const handleChange = <K extends keyof HealthData>(
+    field: K,
+    value: HealthData[K]
+  ) => {
     setHealthData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -88,7 +95,7 @@ export default function HealthPage() {
       } else {
         toast.error("Failed to update information");
       }
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Something went wrong");
     } finally {
       setSubmitting(false);
@@ -121,7 +128,9 @@ export default function HealthPage() {
           <select
             className="input bg-black text-white border border-violet-600 rounded-xl mt-1"
             value={healthData.gender}
-            onChange={(e) => handleChange("gender", e.target.value)}
+            onChange={(e) =>
+              handleChange("gender", e.target.value as "MALE" | "FEMALE")
+            }
           >
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
@@ -145,7 +154,12 @@ export default function HealthPage() {
           <select
             className="input bg-black text-white border border-violet-600 rounded-xl mt-1"
             value={healthData.bloodGroup}
-            onChange={(e) => handleChange("bloodGroup", e.target.value)}
+            onChange={(e) =>
+              handleChange(
+                "bloodGroup",
+                e.target.value as HealthData["bloodGroup"]
+              )
+            }
           >
             <option value="A_POSITIVE">A+</option>
             <option value="B_POSITIVE">B+</option>
@@ -188,7 +202,12 @@ export default function HealthPage() {
           <select
             className="input bg-black text-white border border-violet-600 rounded-xl mt-1"
             value={healthData.maritalStatus}
-            onChange={(e) => handleChange("maritalStatus", e.target.value)}
+            onChange={(e) =>
+              handleChange(
+                "maritalStatus",
+                e.target.value as "MARRIED" | "UNMARRIED"
+              )
+            }
           >
             <option value="MARRIED">Married</option>
             <option value="UNMARRIED">Unmarried</option>
@@ -204,18 +223,24 @@ export default function HealthPage() {
           { field: "hasPastSurgeries", label: "Past Surgeries" },
           { field: "recentAnxiety", label: "Recent Anxiety" },
           { field: "recentDepression", label: "Recent Depression" },
-        ].map((item) => (
-          <label key={item.field} className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={healthData[item.field as keyof HealthData] || false}
-              onChange={(e) => handleChange(item.field, e.target.checked)}
-            />
-            {item.label}
-          </label>
-        ))}
+        ].map((item) => {
+          const value = healthData[item.field as keyof HealthData] as
+            | boolean
+            | undefined;
+          return (
+            <label key={item.field} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={value ?? false}
+                onChange={(e) =>
+                  handleChange(item.field as any, e.target.checked)
+                }
+              />
+              {item.label}
+            </label>
+          );
+        })}
 
-        {/* Dietary Preferences */}
         <label className="flex flex-col col-span-full">
           Dietary Preferences
           <Input

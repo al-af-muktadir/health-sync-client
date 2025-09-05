@@ -1,30 +1,35 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Ban, RefreshCw } from "lucide-react";
-// import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { PaymentInitiate } from "@/components/auth/services/doctorServices";
 import { fetchAppointment } from "@/components/auth/services/userService";
 import { toast, Toaster } from "sonner";
 
-export default function CancelPage({
-  params,
-}: {
-  params: { tran_id: string };
-}) {
+// Explicit Props type
+// interface CancelPageProps {
+//   params: {
+//     tran_id: string;
+//   };
+// }
+
+export default function CancelPage({ params }: any) {
   const { tran_id } = params;
+
   const handlePaymentRetry = async () => {
     const appRes = await fetchAppointment(tran_id);
 
     if (appRes.success) {
       const res = await PaymentInitiate(appRes.data.id);
       if (res?.data.paymentUrl) {
-        window.location.href = res?.data.paymentUrl;
+        window.location.href = res.data.paymentUrl;
       } else {
         toast.error("Failed to get payment link");
       }
+    } else {
+      toast.error("Failed to fetch appointment");
     }
-    console.log();
   };
 
   return (
@@ -49,7 +54,7 @@ export default function CancelPage({
         </p>
 
         <button
-          onClick={() => handlePaymentRetry()}
+          onClick={handlePaymentRetry}
           className="mt-6 inline-flex items-center gap-2 rounded-lg border border-amber-500/40 px-5 py-2.5 font-semibold hover:bg-amber-600/10"
         >
           <RefreshCw className="h-5 w-5" /> Retry Payment
