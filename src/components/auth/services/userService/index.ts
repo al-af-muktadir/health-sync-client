@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 
 export const getme = async () => {
   const token = (await cookies()).get("accessToken")?.value;
-  const result = await fetch("http://localhost:5000/api/v1/user/get-user", {
+  const result = await fetch("NEXT_PUBLIC_BASE_URL/user/get-user", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export const getme = async () => {
 };
 export const getDoctorsByDiseaseName = async (diseaseName: string) => {
   const res = await fetch(
-    `http://localhost:5000/api/v1/diagnosis/${diseaseName}/doctors`,
+    `NEXT_PUBLIC_BASE_URL/diagnosis/${diseaseName}/doctors`,
     {
       method: "GET",
     }
@@ -28,7 +28,7 @@ export const getDoctorsByDiseaseName = async (diseaseName: string) => {
 };
 
 export const createDoctor = async (data: any) => {
-  const res = await fetch(`http://localhost:5000/api/v1/user/create-doctor`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/user/create-doctor`, {
     method: "POST",
     body: data,
   });
@@ -37,7 +37,7 @@ export const createDoctor = async (data: any) => {
   return result;
 };
 export const fetchSpecialties = async () => {
-  const res = await fetch(`http://localhost:5000/api/v1/specialties`);
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/specialties`);
   const result = await res.json();
 
   return result;
@@ -48,16 +48,13 @@ export const fetchAppointment = async (id: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/appointment/txnId/${id}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `${token}` : "",
-      },
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/appointment/txnId/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `${token}` : "",
+    },
+  });
   const result = await res.json();
   return result;
 };
@@ -66,16 +63,13 @@ export const fetchNotificationyyy = async () => {
 
   // Build query string dynamically
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/payment/notificationsss`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `${token}` : "",
-      },
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/payment/notificationsss`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `${token}` : "",
+    },
+  });
   const result = await res.json();
   return result;
 };
@@ -102,7 +96,7 @@ export const fetchMyAppointments = async (
   ).toString();
 
   const res = await fetch(
-    `http://localhost:5000/api/v1/appointment/my-appointment?${queryString}`,
+    `NEXT_PUBLIC_BASE_URL/appointment/my-appointment?${queryString}`,
     {
       method: "GET",
       headers: {
@@ -122,7 +116,7 @@ export const generateRoom = async (id: any) => {
   // Build query string dynamically
 
   const res = await fetch(
-    `http://localhost:5000/api/v1/appointment/${id}/video-token`,
+    `NEXT_PUBLIC_BASE_URL/appointment/${id}/video-token`,
     {
       method: "GET",
       headers: {
@@ -139,7 +133,7 @@ export const getMyHealth = async () => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/patient/me/health`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/patient/me/health`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -154,7 +148,7 @@ export const updateHealth = async (data: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/patient/me/health`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/patient/me/health`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -170,7 +164,7 @@ export const getMyReports = async () => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/medical/my-report`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/medical/my-report`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -185,7 +179,7 @@ export const PostMyReports = async (data: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/medical`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/medical`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -211,7 +205,7 @@ export const fetchMyPayments = async (options: FetchMyPaymentsOptions = {}) => {
   if (options.search) params.append("search", options.search);
 
   const res = await fetch(
-    `http://localhost:5000/api/v1/payment/my-payments?${params.toString()}`,
+    `NEXT_PUBLIC_BASE_URL/payment/my-payments?${params.toString()}`,
     {
       method: "GET",
       headers: {
@@ -232,7 +226,7 @@ export const deleteReport = async (id: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/medical/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/medical/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -247,12 +241,9 @@ export const getMyStats = async (email: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/patient/stats/${email}`,
-    {
-      method: "GET",
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/patient/stats/${email}`, {
+    method: "GET",
+  });
   const result = await res.json();
   return result;
 };

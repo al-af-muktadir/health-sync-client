@@ -25,7 +25,7 @@ export const getSchedules = async (params?: ScheduleQueryParams) => {
   }
 
   const result = await fetch(
-    `http://localhost:5000/api/v1/schedules?${query.toString()}`,
+    `NEXT_PUBLIC_BASE_URL/schedules?${query.toString()}`,
     {
       method: "GET",
       headers: {
@@ -43,7 +43,7 @@ export const saveSchedules = async (data: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/doctor-schedule`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/doctor-schedule`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export const fetchMyBlogs = async () => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog/my`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog/my`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export const getDoctorById = async (id: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/doctor/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/doctor/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const mySchedules = async ({
   if (isBooked !== undefined) query.append("isBooked", String(isBooked));
 
   const res = await fetch(
-    `http://localhost:5000/api/v1/doctor-schedule/me?${query.toString()}`,
+    `NEXT_PUBLIC_BASE_URL/doctor-schedule/me?${query.toString()}`,
     {
       method: "GET",
       headers: {
@@ -131,15 +131,12 @@ export const DeleteSchedules = async (id: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/doctor-schedule/${id}`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: token ? `${token}` : "",
-      },
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/doctor-schedule/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: token ? `${token}` : "",
+    },
+  });
 
   const result = await res.json();
   return result;
@@ -183,16 +180,13 @@ export const getAllDoctors = async ({
   if (sortBy) query.append("sortBy", sortBy);
   if (sortOrder) query.append("sortOrder", sortOrder);
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/doctor?${query.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `${token}`,
-      },
-      cache: "no-store", // always fresh
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/doctor?${query.toString()}`, {
+    method: "GET",
+    headers: {
+      Authorization: `${token}`,
+    },
+    cache: "no-store", // always fresh
+  });
 
   return res.json(); // will contain {meta, data}
 };
@@ -201,15 +195,12 @@ export const getScheduleById = async (id: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/doctor-schedule/${id}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: token ? `${token}` : "",
-      },
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/doctor-schedule/${id}`, {
+    method: "GET",
+    headers: {
+      Authorization: token ? `${token}` : "",
+    },
+  });
 
   const result = await res.json();
   return result;
@@ -219,7 +210,7 @@ export const bookAppointment = async (data: any) => {
   console.log(token, data, "INSERVERFUNC");
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/appointment`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/appointment`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -234,7 +225,7 @@ export const bookAppointment = async (data: any) => {
 export const createBlogs = async (formData: any) => {
   const token = (await cookies()).get("accessToken")?.value;
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog`, {
     method: "POST",
     headers: {
       Authorization: token ? `${token}` : "",
@@ -248,7 +239,7 @@ export const createBlogs = async (formData: any) => {
 export const fetchALlBloggggg = async () => {
   const token = (await cookies()).get("accessToken")?.value;
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog`, {
     method: "GET",
     headers: {
       Authorization: token ? `${token}` : "",
@@ -263,7 +254,7 @@ export const deleteBlogs = async (id: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -279,7 +270,7 @@ export const updateBlogs = async (id: any, data: any) => {
 
   // Build query string dynamically
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -297,16 +288,13 @@ export const PaymentInitiate = async (id: any) => {
   // Build query string dynamically
   console.log("aId", id);
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/payment/init-payment/${id}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `${token}` : "",
-      },
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/payment/init-payment/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `${token}` : "",
+    },
+  });
 
   const result = await res.json();
   return result;
@@ -317,17 +305,14 @@ export const UpdateStatus = async (id: any, status: any) => {
   // Build query string dynamically
   console.log("aId", id);
 
-  const res = await fetch(
-    `http://localhost:5000/api/v1/appointment/status/${id}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `${token}` : "",
-      },
-      body: JSON.stringify(status),
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/appointment/status/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `${token}` : "",
+    },
+    body: JSON.stringify(status),
+  });
 
   const result = await res.json();
   return result;
@@ -336,7 +321,7 @@ export const createPrescription = async (id: any, data: any) => {
   const token = (await cookies()).get("accessToken")?.value;
 
   const res = await fetch(
-    `http://localhost:5000/api/v1/appointment/prescription/${id}`,
+    `NEXT_PUBLIC_BASE_URL/appointment/prescription/${id}`,
     {
       method: "POST",
       headers: {
@@ -353,7 +338,7 @@ export const createPrescription = async (id: any, data: any) => {
 export const fetchDoctorDashboard = async () => {
   const token = (await cookies()).get("accessToken")?.value;
 
-  const res = await fetch(`http://localhost:5000/api/v1/diagnosis/my-stats`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/diagnosis/my-stats`, {
     method: "GET",
     headers: {
       Authorization: token ? `${token}` : "",
@@ -366,7 +351,7 @@ export const fetchDoctorDashboard = async () => {
 export const fetchAllBlog = async () => {
   const token = (await cookies()).get("accessToken")?.value;
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog`, {
     method: "GET",
     headers: {
       Authorization: token ? `${token}` : "",
@@ -379,7 +364,7 @@ export const fetchAllBlog = async () => {
 export const updatePublish = async (id: any, isPublished: any) => {
   const token = (await cookies()).get("accessToken")?.value;
 
-  const res = await fetch(`http://localhost:5000/api/v1/blog/publish/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog/publish/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -393,19 +378,16 @@ export const updatePublish = async (id: any, isPublished: any) => {
 };
 
 export const getPublishedBlogs = async () => {
-  const res = await fetch(
-    `http://localhost:5000/api/v1/blog?isPublished=true`,
-    {
-      cache: "no-store",
-    }
-  );
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog?isPublished=true`, {
+    cache: "no-store",
+  });
 
   const data = await res.json();
   return data.data || [];
 };
 
 export async function fetchBlogById(id: string) {
-  const res = await fetch(`http://localhost:5000/api/v1/blog/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/blog/${id}`, {
     cache: "no-store",
   });
 

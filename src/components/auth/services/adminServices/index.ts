@@ -93,7 +93,7 @@ export const updateDiseaseData = async (id: any, data: any) => {
 export const getAdminDashboard = async () => {
   const token = (await cookies()).get("accessToken")?.value;
 
-  const res = await fetch(`http://localhost:5000/api/v1/user/dashboard`, {
+  const res = await fetch(`NEXT_PUBLIC_BASE_URL/user/dashboard`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

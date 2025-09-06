@@ -53,7 +53,7 @@ const ManageDoctors = () => {
       if (filters.specialties) query.append("specialties", filters.specialties);
 
       const res = await axios.get<DoctorsResponse>(
-        `http://localhost:5000/api/v1/doctor?${query.toString()}`
+        `NEXT_PUBLIC_BASE_URL/doctor?${query.toString()}`
       );
 
       setDoctors(res.data.data);
@@ -77,7 +77,7 @@ const ManageDoctors = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this doctor?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/v1/doctor/${id}`);
+      await axios.delete(`NEXT_PUBLIC_BASE_URL/doctor/${id}`);
       toast.success("Doctor deleted successfully!");
       fetchDoctors();
     } catch (err) {
